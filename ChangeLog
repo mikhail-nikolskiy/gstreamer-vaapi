@@ -1,3 +1,71 @@
+=== release 1.18.6 ===
+
+2022-02-02 15:08:43 +0000  Tim-Philipp Müller <tim@centricular.com>
+
+	* ChangeLog:
+	* NEWS:
+	* RELEASE:
+	* gstreamer-vaapi.doap:
+	* meson.build:
+	  Release 1.18.6
+
+2022-01-30 09:38:48 +0100  Víctor Manuel Jáquez Leal <vjaquez@igalia.com>
+
+	* gst/vaapi/gstvaapipluginutil.c:
+	* meson.build:
+	  vaapi: Disable Wayland if no libdrm
+	  Platform wise, is not possible, as far as I known, to have Wayland
+	  without kernel's DRM. Though, it's possible to configure
+	  gstreamer-vaapi without DRM but Wayland support, with the enhanced
+	  handling of dmabuf in vaapisink for Wayland, vaapisink will always
+	  fail. Given both issues, configuration with no DRM but Wayland, makes
+	  things more complex, and a simpler approach is to refuse that
+	  configuration.
+	  This patch disables Wayland support if there isn't DRM support. Also,
+	  it disables the display test for Wayland, relying only on DRM and
+	  X11.
+	  Part-of: <https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi/-/merge_requests/441>
+
+2022-01-30 07:10:09 +0100  Víctor Manuel Jáquez Leal <vjaquez@igalia.com>
+
+	* gst-libs/gst/vaapi/video-format.c:
+	  vaapi: libs: video-format: Check if formats map is not NULL.
+	  Formats map is instantiated at the end of the display
+	  instantiation. The problem is the Wayland display which looks for a
+	  format in a callback, before the map is populated.
+	  If user compiles gstreamer-vaapi with DRM support, the map is
+	  populated with a DRM display at GStreamer plugin registration. But if
+	  not, or a VA driver is not available, the plugin will try with a
+	  Wayland driver, which cause the NULL de-reference.
+	  Nevertheless, in the case of no DRM support, and if the Wayland
+	  display doesn't get a reply from the format conversion is not a
+	  problem.
+	  So the solution is the trivial one, check if the format map is already
+	  populated before de-reference it.
+	  Fixes: #977
+	  Part-of: <https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi/-/merge_requests/441>
+
+2021-12-01 12:26:11 +0100  Víctor Manuel Jáquez Leal <vjaquez@igalia.com>
+
+	* gst/vaapi/gstvaapidecode.c:
+	  vaapidecode: Autogenerate caps template.
+	  vaapidecode is used in vaapidecodebin and it exposes all the
+	  theoretically supported caps, but that slows down autoplug. With this
+	  autplug is negotiated faster, giving more option to decodebin to select
+	  other decoder.
+	  Part-of: <https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi/-/merge_requests/440>
+
+2021-11-15 16:38:34 +0800  Ung, Teng En <teng.en.ung@intel.com>
+
+	* gst/vaapi/gstvaapipostproc.c:
+	  vaapipostproc: fix mising metadata when using system
+	  Part-of: <https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi/-/merge_requests/439>
+
+2021-09-09 00:13:12 +0100  Tim-Philipp Müller <tim@centricular.com>
+
+	* meson.build:
+	  Back to development
+
 === release 1.18.5 ===
 
 2021-09-08 20:05:19 +0100  Tim-Philipp Müller <tim@centricular.com>
